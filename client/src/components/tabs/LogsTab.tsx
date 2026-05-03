@@ -20,10 +20,12 @@ export function LogsTab({ projectId, processStatus }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const autoScrollRef = useRef(true)
 
+  const prevLenRef = useRef(0)
   useEffect(() => {
-    if (autoScrollRef.current && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
+    if (!autoScrollRef.current || !bottomRef.current) return
+    const behavior = lines.length - prevLenRef.current > 5 ? 'instant' : 'smooth'
+    bottomRef.current.scrollIntoView({ behavior: behavior as ScrollBehavior })
+    prevLenRef.current = lines.length
   }, [lines])
 
   const handleScroll = () => {
