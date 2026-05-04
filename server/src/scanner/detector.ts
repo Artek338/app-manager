@@ -29,6 +29,8 @@ const EXCLUDED_DIRS = new Set([
 export function isProject(dirPath: string): boolean {
   const signals = ['package.json', 'pyproject.toml', 'requirements.txt', 'docker-compose.yml', 'CLAUDE.md']
   if (signals.some(f => fs.existsSync(path.join(dirPath, f)))) return true
+  // Repo git bez package.json (np. planning-only, static)
+  if (fs.existsSync(path.join(dirPath, '.git'))) return true
   // Sprawdź kanban.md w podfolderach (max 2 poziomy)
   return findKanbanPath(dirPath) !== null
 }
