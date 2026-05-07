@@ -59,7 +59,25 @@ export async function scanProjects(rootDir: string, existingConfig: AppConfig): 
       config.kanbanPath = config.kanbanPath ?? (detection.kanbanPath ? path.relative(projectPath, detection.kanbanPath) : null)
     }
 
-    results.push({ id, displayName: config.displayName, projectPath, detection, metadata, config })
+    // overrideAutoDetect + custom path → użyj ścieżki z configu
+    const effectivePath = (config.overrideAutoDetect && config.path && config.path !== projectPath && fs.existsSync(config.path))
+      ? config.path
+      : projectPath
+    const effectiveDetection = effectivePath !== projectPath ? detectProject(effectivePath) : detection
+    const effectiveMetadata = effectivePath !== projectPath ? extractProjectMetadata(effectivePath) : metadata
+
+    results.push({ id, displayName: config.displayName, projectPath: effectivePath, detection: effectiveDetection, metadata: effectiveMetadata, config })
+  }
+
+  // Dołącz projekty skonfigurowane ręcznie (overrideAutoDetect + custom path)
+  const scannedIds = new Set(results.map(r => r.id))
+  for (const [id, projectConfig] of Object.entries(existingConfig.projects)) {
+    if (!projectConfig.overrideAutoDetect) continue
+    if (scannedIds.has(id)) continue
+    if (!projectConfig.path || !fs.existsSync(projectConfig.path)) continue
+    const detection = detectProject(projectConfig.path)
+    const metadata = extractProjectMetadata(projectConfig.path)
+    results.push({ id, displayName: projectConfig.displayName, projectPath: projectConfig.path, detection, metadata, config: projectConfig })
   }
 
   // Disambiguuj duplikaty displayName

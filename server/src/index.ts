@@ -11,7 +11,7 @@ const app = express()
 const config = loadConfig()
 const PORT = config.appPort
 
-app.use(cors({ origin: `http://localhost:5173` }))
+app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174'] }))
 app.use(express.json())
 
 // API routes

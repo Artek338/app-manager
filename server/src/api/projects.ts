@@ -178,7 +178,7 @@ export function projectsRouter(): Router {
     const project = projects.find(p => p.id === req.params.id)
     if (!project) return res.status(404).json({ error: 'Projekt nie znaleziony', code: 'NOT_FOUND' })
 
-    const { id: _id, path: _path, ...patch } = req.body
+    const { id: _id, ...patch } = req.body
     const updated = upsertProjectConfig(project.id, patch)
     // Unieważnij cache
     lastScanTime = 0

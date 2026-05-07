@@ -35,7 +35,9 @@ export function useLogs(projectId: string | null) {
     }
 
     return () => {
-      ws.send(JSON.stringify({ type: 'unsubscribe', projectId }))
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'unsubscribe', projectId }))
+      }
       ws.close()
       wsRef.current = null
     }

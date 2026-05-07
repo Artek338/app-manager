@@ -46,7 +46,7 @@ export function ProjectPanel({ project, onClose, onRefresh }: Props) {
   const currentTab = visibleTabs.find(t => t.id === activeTab) ? activeTab : visibleTabs[0]?.id ?? 'overview'
 
   return (
-    <div className="w-[420px] flex-shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col h-screen sticky top-0">
+    <div className="fixed inset-0 z-30 flex flex-col bg-slate-900 border-l border-slate-800 md:sticky md:top-0 md:inset-auto md:z-auto md:w-[420px] md:h-screen md:flex-shrink-0">
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-800 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">

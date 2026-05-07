@@ -6,6 +6,8 @@ interface Props {
   selectedId: string | null
   onSelect: (id: string) => void
   onRefresh: () => void
+  isOpen: boolean
+  onClose: () => void
 }
 
 const DOT: Record<ProcessStatus, string> = {
@@ -16,7 +18,7 @@ const DOT: Record<ProcessStatus, string> = {
   error: 'bg-red-500',
 }
 
-export function Sidebar({ projects, selectedId, onSelect, onRefresh }: Props) {
+export function Sidebar({ projects, selectedId, onSelect, onRefresh, isOpen, onClose }: Props) {
   const running = projects.filter(p => p.processStatus === 'running' || p.processStatus === 'starting')
 
   const handleScan = async () => {
@@ -25,11 +27,26 @@ export function Sidebar({ projects, selectedId, onSelect, onRefresh }: Props) {
   }
 
   return (
-    <aside className="w-52 flex-shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col h-screen sticky top-0">
+    <aside className={`
+      fixed inset-y-0 left-0 z-50 w-72 flex flex-col
+      bg-slate-950 border-r border-slate-800 h-screen
+      transition-transform duration-300 ease-in-out
+      md:sticky md:top-0 md:inset-auto md:z-auto md:w-52 md:flex-shrink-0 md:translate-x-0
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-slate-800">
-        <h1 className="text-sm font-bold text-slate-100">App Manager</h1>
-        <p className="text-xs text-slate-500 mt-0.5">{projects.length} projektów</p>
+      <div className="px-4 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h1 className="text-sm font-bold text-slate-100">App Manager</h1>
+          <p className="text-xs text-slate-500 mt-0.5">{projects.length} projektów</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="md:hidden w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+          aria-label="Zamknij menu"
+        >
+          ✕
+        </button>
       </div>
 
       {/* Lista projektów */}
